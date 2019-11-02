@@ -20,7 +20,7 @@ class Client
      * @param string $method
      * @param string $url
      * @param array $options
-     * 
+     *
      * @return array
      */
     public function request(string $method, string $url, array $options)
@@ -32,7 +32,7 @@ class Client
 
     /**
      * @param \GuzzleHttp\Psr7\Response $response
-     * 
+     *
      * @return array
      */
     private function parse($response)

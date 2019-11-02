@@ -1,10 +1,11 @@
 # Slack for PHP
 
-This library it not ready, don't use it now.
+[![Build Status](https://travis-ci.com/cian6390/slack.svg?branch=master)](https://travis-ci.com/cian6390/slack)
+
 
 ## Requirements
 
-- PHP7.0
+- PHP 7.0+
 
 ## Installation
 
@@ -12,133 +13,172 @@ This library it not ready, don't use it now.
 composer require cian/slack
 ```
 
-### Laravel 5
+### IncomingWebhook
 
-```shell
-php artisan vendor:publish
-```
-
-#### Provider
-
-If your laravel version greater then or equals to 5.5 and you don't need to do this. 
+This is a example for sending basic incoming webhook.  
+For more complex scenario you will need to use `BlockBuilder` or `AttachmentBuilder`
 
 ```php
-// config/app.php
-[
-    // register what you need
-    'providers' => [
-        \Cian\Slack\ServiceProvider::class
-    ]
-]
+use Cian\Slack\IncomingWebhook;
 
+$url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
+
+(new IncomingWebhook)->send($message, $url);
 ```
 
-### Message
+### Interactive Message
 
-Message instance can use for IncomingWebhook, InteractiveMessage
-
-#### Basic
+To use interactive message you need setup app's `OAuth & Permissions`  
+After that, you can send message like below.  
 
 ```php
+use Cian\Slack\InteractiveMessage;
 
-use Cian\Slack\Message;
+$token = 'your-app-token';
 
-/**
- * You can just give text and optional argument `$enableMarkdownForText`
- **/
-$text = '😗😗😗 Hello world!';
-$enableMarkdownForText = false; // default to true, you need give false when you want use emoji.
-$message = new Message($text, $enableMarkdownForText);
+// $channel can be channel_name, channel_id, user_slack_id
+// but slack suggest don't use channel_name.
+$channel = 'development';
 
-/** 
- * output:
- * [
- *      'text' => '😗😗😗 Hello world!',
- *      'mrkdwn' => false
- * ]
- **/
-$message->toArray();
+$message = 'Hello Interactive Message!';
 
+(new InteractiveMessage([
+    'token' => $token,
+    'channel' => $channel
+]))->send($message);
+
+// or
+
+(new InteractiveMessage)
+    ->setToken($token)
+    ->to($channel)
+    ->send($message);
 ```
 
-#### Use Block
+### Block
+
+Slack suggests that we use `Block` instead of `Attachment`  
+because `Block` is more flexible than `Attachment`.  
 
 ```php
-
-use Cian\Slack\Message;
+use Cian\Slack\IncomingWebhook;
 use Cian\Slack\Builders\BlockBuilder;
 
-$builder = new BlockBuilder;
+$url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
 
-$builder
-    ->section('*A Title Here*') // block use text type `mrkdwn` by default
+$builder = (new BlockBuilder)
+    ->section('*A Title Here*')
     ->section('body content ...')
     ->divider()
-    ->disableMarkdown() // You need disable markdown before use emoji 
-    ->section('😗😗😗')
-    ->actions([ /** array of interactive components */]);
+    ->section('😗😗😗');
 
-// create a message by given block builder instance.
-$message = new Message($builder);
-
-// or give a array
-// more https://api.slack.com/reference/messaging/payload
-$message = new Message([
-    'blocks' => $builder->toArray()
-    'text' => '😗 fallback message ...',
-    'mrkdwn' => false
-]);
+(new IncomingWebhook)->send($builder, $url)
 ```
 
 ### Attachment
 
+Even Slack suggests that we use `Block` instead of `Attachment`, 
+but Slack won't remove the `Attachment`.  
 
-##### InteractiveMessage
+`Attachment` has a lot of fields, but they are all legacy.  
+[check slack attachment document to know more](https://api.slack.com/reference/messaging/attachments)  
+
+The best way of using Attachment, is keep it only has these two fields, `blocks` and `color`.  
 
 ```php
+use Cian\Slack\IncomingWebhook;
+use Cian\Slack\Builders\BlockBuilder;
+use Cian\Slack\Builders\AttachmentBuilder;
 
-use Cian\Slack\Message;
-use Cian\Slack\InteractiveMessage as SIM;
+$blockBuilder = (new BlockBuilder)->section('How are you?');
 
-$token = 'my-app-token';
+// when you provide block builder as the first argument
+// then the second argument color will be applied
+// the color can be 'good', 'warning', 'danger' or any valid hex color code.
+$attachments = (new AttachmentBuilder($blockBuilder, '#ff0000'));
 
-$channel = 'general';
-$message = new Message('Hello Interactive Message');
+$url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
 
-$sim = new SIM
-$sim->setToken($token)->setChannel($channel)->send($message);
-
-// or
-
-$sim = new SIM([
-    'token' => $token,
-    'channel' => $channel
-]);
-
-$sim->send($message);
+(new IncomingWebhook)
+    ->send($attachments, $url);
 ```
 
-##### IncomingWebhook
+That say you still need legacy fields.  
+then you can do it like below.  
 
 ```php
+use Cian\Slack\IncomingWebhook;
+use Cian\Slack\Builders\AttachmentBuilder;
 
+$attachments = (new AttachmentBuilder)->add([
+    'text' => '😗😗😗',
+    'fallback' => 'fall back text...',
+    'footer' => 'footer text...',
+    'color' => 'danger'
+    // ... more legacy fields
+]);
+
+$url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
+
+(new IncomingWebhook)
+    ->send($attachments, $url);
+```
+
+That say you face a very complex scenario  
+You want use blocks and attachments together!!  
+
+```php
 use Cian\Slack\Message;
-use Cian\Slack\IncomingWebhook as SIW;
+use Cian\Slack\IncomingWebhook;
+use Cian\Slack\Builders\BlockBuilder;
+use Cian\Slack\Builders\AttachmentBuilder;
 
-$token = 'my-app-token';
-$url = 'https://api.slack.com/path/to/my/incoming-webhook/url';
+$titleBlocker = (new BlockBuilder)
+    ->section('Title row 😗😗😗');
 
-$message = new Message('Hello world');
+$bodyBlocker = (new BlockBuilder)
+    ->section('body content ...')
+    ->divider();
 
-// you can set token by setToken method
-// and you don't need give any paramaters to construct
-$siw = new SIW(['token' => $token]);
+$attachmenter = (new AttachmentBuilder($bodyBlocker, '#ff00ff'));
 
-$siw->send($message, $url);
+$message = new Message($titleBlocker);
 
-// or
+$message->setAttachments($attachmenter);
 
-$siw->setURL($url)
-    ->send($message);
+$url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
 
+(new IncomingWebhook)
+    ->send($message, $url);
+```
+
+Although I use IncomingWebhook in document examples,  
+but the same thing can be used in InteractiveMessage send method.  
+
+## Interactive Component
+
+### Button
+
+```php
+use Cian\Slack\IncomingWebhook;
+use Cian\Slack\Builders\BlockBuilder;
+use Cian\Slack\Builders\ElementBuilder;
+
+$text = 'Approve';
+$actionId = 'approve_request';
+$value = ['foo' => 'bar'];  // optional default ''
+$style = 'primary';         // optional default 'primary'
+$type = 'plain_text';       // optional default `plain_text`
+$button = ElementBuilder::makeButton($text, $actionId, $value, $style, $type);
+// or $button = (new ElementBuilder)->button(/** same as makeButton */);
+
+$blocker = (new BlockBuilder)
+    ->section('*Can I buy a toy ?*')
+    ->divider()
+    ->actions([$button]);
+
+$url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
+
+(new IncomingWebhook)->to($url)->send($blocker);
+// or (new IncomingWebhook)->send($blocker, $url);
 ```

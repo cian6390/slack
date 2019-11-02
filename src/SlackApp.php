@@ -43,7 +43,7 @@ abstract class SlackApp implements SlackContract
 
     public function getAPI($api)
     {
-        if (isset($api['headers']['Authorization'])) {
+        if (is_null($api['headers']['Authorization'])) {
             $api['headers']['Authorization'] = 'Bearer ' . $this->getToken();
         }
 

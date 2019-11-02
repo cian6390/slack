@@ -2,9 +2,8 @@
 
 namespace Cian\Slack;
 
+use Cian\Slack\Message;
 use Cian\Slack\SlackApp;
-use Cian\Slack\Builders\BlockBuilder;
-use Cian\Slack\Builders\ElementBuilder;
 
 class InteractiveMessage extends SlackApp
 {
@@ -22,18 +21,23 @@ class InteractiveMessage extends SlackApp
     public function to($channel)
     {
         $this->channel = $channel;
+
         return $this;
     }
 
-    public function send($blocks, $channel = null)
+    public function send($message, $channel = null)
     {
+        $payload = is_a($message, Message::class)
+            ? $message->toArray()
+            : (new Message($message))->toArray();
+
+        $payload['channel'] = is_null($channel) ? $this->channel : $channel;
+
         $api = $this->getAPI(self::CHAT_POST_MESSAGE_API);
+
         return $this->client->request($api['method'], $api['url'], [
             'headers' => $api['headers'],
-            'json' => [
-                'channel' => is_null($channel) ? $this->channel : $channel,
-                'blocks' => $blocks
-            ]
+            'json' => $payload
         ]);
     }
 
@@ -41,25 +45,13 @@ class InteractiveMessage extends SlackApp
     {
         $api = $this->getAPI(self::CHAT_UPDATE_API);
 
-        $blocks = is_string($message)
-            ? [BlockBuilder::makeSection($message)]
-            : $message;
+        $payload = (new Message($message))->toArray();
 
         $options = [
             'headers' => $api['headers'],
-            'json' => ['blocks' => $blocks]
+            'json' => $payload
         ];
 
         return $this->client->request($api['method'], $url, $options);
-    }
-
-    public function blocker($blocks = [])
-    {
-        return app(BlockBuilder::class, ['blocks' => $blocks]);
-    }
-
-    public function elementer()
-    {
-        return app(ElementBuilder::class);
     }
 }

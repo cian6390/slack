@@ -10,7 +10,8 @@ interface SlackContract
         'method' => 'POST',
         'path' => '/chat.postMessage',
         'headers' => [
-            'Content-type' => 'application/json'
+            'Content-type' => 'application/json;charset=utf-8',
+            'Authorization' => null
         ]
     ];
 

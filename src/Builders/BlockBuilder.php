@@ -6,6 +6,11 @@ class BlockBuilder
 {
     protected $blocks = [];
 
+    public function toArray()
+    {
+        return $this->get();
+    }
+
     public function get($index = null)
     {
         return is_null($index) ? $this->blocks : $this->blocks[$index];
