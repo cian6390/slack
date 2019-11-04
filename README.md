@@ -21,7 +21,7 @@ composer require cian/slack
 php artisan vendor:publish --provider="Cian\Slack\LaravelServiceProvider"
 ```
 
-If your laravel version `<= 5.4`, don't forget register service provider.  
+If your laravel version `<= 5.4`, don't forget to add a service provider.  
 
 ```php
 // /config/app.php
@@ -35,13 +35,14 @@ If your laravel version `<= 5.4`, don't forget register service provider.
 
 ### Slack Methods
 
-Slack has a lot [useful method](https://api.slack.com/methods)
-This library will include them step by step.  
+Slack has a lot of [useful methods](https://api.slack.com/methods).  
 
 **Available methods**
 
 - users.list
 - users.lookupByEmail
+
+More methods will be added in this library.
 
 #### users.list
 
@@ -67,13 +68,13 @@ $response = (new SlackMethod)
     ->usersLookupByEmail($email);
 ```
 
-> Note that if you get SlackMethod, InteractiveMessage from LaravelServiceProvider  
-> then you don't need call `setToken` before api call.  
+> Note that if you get SlackMethod, InteractiveMessage from LaravelServiceProvider,  
+> you don't need to call `setToken` before api call.  
 
 ### IncomingWebhook
 
-This is an example for sending basic incoming webhook.  
-For more complex scenario you will need to use `BlockBuilder` or `AttachmentBuilder`
+This is an example for sending a basic incoming webhook.  
+For more complex scenarios you will need to use `BlockBuilder` or `AttachmentBuilder`.
 
 ```php
 use Cian\Slack\IncomingWebhook;
@@ -85,8 +86,7 @@ $url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
 
 ### Interactive Message
 
-To use interactive message you need setup app's `OAuth & Permissions`  
-After that, you can send message like below.  
+To use interactive message, you need to set up `OAuth & Permissions` of your app. After that, you can send the message like below.  
 
 ```php
 use Cian\Slack\InteractiveMessage;
@@ -94,7 +94,7 @@ use Cian\Slack\InteractiveMessage;
 $token = 'your-app-token';
 
 // $channel can be channel_name, channel_id, user_slack_id
-// but slack suggest don't use channel_name.
+// but Slack suggests not to use channel_name.
 $channel = 'development';
 
 $message = 'Hello Interactive Message!';
@@ -114,7 +114,7 @@ $message = 'Hello Interactive Message!';
 
 ### Block
 
-Slack suggests that we use `Block` instead of `Attachment`  
+Slack suggests to use `Block` instead of `Attachment`  
 because `Block` is more flexible than `Attachment`.  
 
 ```php
@@ -134,13 +134,13 @@ $builder = (new BlockBuilder)
 
 ### Attachment
 
-Even Slack suggests that we use `Block` instead of `Attachment`, 
-but Slack won't remove the `Attachment`.  
+Even Slack suggests to use `Block` instead of `Attachment`,  
+it won't remove the `Attachment`.  
 
 `Attachment` has a lot of fields, but they are all legacy.  
 [check slack attachment document to know more](https://api.slack.com/reference/messaging/attachments)  
 
-The best way of using Attachment, is keep it only has these two fields, `blocks` and `color`.  
+The best way of using Attachment is keep only two fields, `blocks` and `color`.  
 
 ```php
 use Cian\Slack\IncomingWebhook;
@@ -150,7 +150,7 @@ use Cian\Slack\Builders\AttachmentBuilder;
 $blockBuilder = (new BlockBuilder)->section('How are you?');
 
 // when you provide block builder as the first argument
-// then the second argument color will be applied
+// the second argument color will be applied
 // the color can be 'good', 'warning', 'danger' or any valid hex color code.
 $attachments = (new AttachmentBuilder($blockBuilder, '#ff0000'));
 
@@ -160,8 +160,8 @@ $url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
     ->send($attachments, $url);
 ```
 
-That say you still need legacy fields.  
-then you can do it like below.  
+Let's say if you still need legacy fields,  
+you can do it like below.  
 
 ```php
 use Cian\Slack\IncomingWebhook;
@@ -181,8 +181,8 @@ $url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
     ->send($attachments, $url);
 ```
 
-That say you face a very complex scenario  
-You want use blocks and attachments together!!  
+Let's say you are facing a very complex scenario,    
+you would need to use blocks and attachments together.  
 
 ```php
 use Cian\Slack\Message;
@@ -209,8 +209,8 @@ $url = 'https://hooks.slack.com/services/path/to/your/incoming-webhook/url';
     ->send($message, $url);
 ```
 
-Although I use IncomingWebhook in document examples,  
-but the same thing can be used in InteractiveMessage send method.  
+Although I use `IncomingWebhook` in document examples,  
+it can be replaced by `InteractiveMessage`.  
 
 ## Interactive Component
 
