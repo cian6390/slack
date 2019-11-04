@@ -2,16 +2,13 @@
 
 namespace Cian\Slack\Tests;
 
-use Mockery;
 use Cian\Slack\SlackMethod;
-use GuzzleHttp\Psr7\Response;
 
 class SlackMethodTest extends TestCase
 {
     /** @test */
     public function it_can_list_team_users()
     {
-        $token = 'xoxp-18480229362-213547405250-782294944245-7b2d2218c72dc7f2d10718ff1b8632d7';
         $token = 'foo-123';
 
         $mock = $this->getMockedGuzzle();
@@ -49,6 +46,6 @@ class SlackMethodTest extends TestCase
         (new SlackMethod)
             ->setClient($mock)
             ->setToken($token)
-            ->lookupByEmail($email);
+            ->usersLookupByEmail($email);
     }
 }

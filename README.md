@@ -33,6 +33,43 @@ If your laravel version `<= 5.4`, don't forget register service provider.
 ]
 ```
 
+### Slack Methods
+
+Slack has a lot [useful method](https://api.slack.com/methods)
+This library will include them step by step.  
+
+**Available methods**
+
+- users.list
+- users.lookupByEmail
+
+#### users.list
+
+```php
+use Cian\Slack\SlackMethod;
+
+$token = 'your-app-token';
+
+$response = (new SlackMethod)
+    ->setToken($token)
+    ->usersList();
+```
+
+#### users.lookupByEmail
+
+```php
+use Cian\Slack\SlackMethod;
+
+$token = 'your-app-token';
+
+$response = (new SlackMethod)
+    ->setToken($token)
+    ->usersLookupByEmail($email);
+```
+
+> Note that if you get SlackMethod, InteractiveMessage from LaravelServiceProvider  
+> then you don't need call `setToken` before api call.  
+
 ### IncomingWebhook
 
 This is an example for sending basic incoming webhook.  

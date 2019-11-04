@@ -12,7 +12,7 @@ class SlackMethod extends SlackApp
         parent::__construct($options, $client);
     }
 
-    public function lookupByEmail(string $email)
+    public function usersLookupByEmail(string $email)
     {
         $url = self::API_ENDPOINT . "/users.lookupByEmail?token={$this->token}&email={$email}";
         return $this->client->request('GET', $url, [

@@ -4,6 +4,7 @@ namespace Cian\Slack;
 
 use Cian\Slack\Client;
 use GuzzleHttp\Client as Guzzle;
+use Cian\Slack\SlackMethod;
 use Cian\Slack\InteractiveMessage;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,12 @@ class LaravelServiceProvider extends ServiceProvider
             $token = config('slack.token');
             $client = new Client(app(Guzzle::class));
             return new InteractiveMessage(['token' => $token], $client);
+        });
+
+        $this->app->bind(SlackMethod::class, function ($app) {
+            $token = config('slack.token');
+            $client = new Client(app(Guzzle::class));
+            return new SlackMethod(['token' => $token], $client);
         });
     }
 
