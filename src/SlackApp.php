@@ -27,6 +27,8 @@ abstract class SlackApp implements SlackContract
     public function setClient($client)
     {
         $this->client = $client;
+
+        return $this;
     }
 
     public function setToken(string $token)
