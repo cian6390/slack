@@ -27,6 +27,6 @@ class LaravelServiceProvide extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/slack.php' => config_path('slack.php'),
-        ]);
+        ], 'config');
     }
 }
