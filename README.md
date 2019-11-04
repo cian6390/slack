@@ -1,7 +1,9 @@
 # Slack for PHP
 
 [![Build Status](https://travis-ci.com/cian6390/slack.svg?branch=master)](https://travis-ci.com/cian6390/slack)
-
+[![Latest Stable Version](https://poser.pugx.org/cian/slack/v/stable)](https://packagist.org/packages/cian/slack)
+[![Total Downloads](https://poser.pugx.org/cian/slack/downloads)](https://packagist.org/packages/cian/slack)
+[![License](https://poser.pugx.org/cian/slack/license)](https://packagist.org/packages/cian/slack)
 
 ## Requirements
 
@@ -13,9 +15,27 @@
 composer require cian/slack
 ```
 
+### Laravel
+
+```shell
+php artisan vendor:publish --provider="Cian\Slack\LaravelServiceProvider"
+```
+
+If your laravel version `<= 5.4`, don't forget register service provider.  
+
+```php
+// /config/app.php
+[
+    "providers" => [
+        // other providers ...
+        Cian\Slack\LaravelServiceProvider::class
+    ]
+]
+```
+
 ### IncomingWebhook
 
-This is a example for sending basic incoming webhook.  
+This is an example for sending basic incoming webhook.  
 For more complex scenario you will need to use `BlockBuilder` or `AttachmentBuilder`
 
 ```php
