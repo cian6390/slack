@@ -7,7 +7,7 @@ use GuzzleHttp\Client as Guzzle;
 use Cian\Slack\InteractiveMessage;
 use Illuminate\Support\ServiceProvider;
 
-class LaravelServiceProvide extends ServiceProvider
+class LaravelServiceProvider extends ServiceProvider
 {
     public function register()
     {
