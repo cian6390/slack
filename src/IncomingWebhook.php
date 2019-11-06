@@ -7,8 +7,19 @@ use Cian\Slack\SlackApp;
 
 class IncomingWebhook extends SlackApp
 {
+    /**
+     * Incoming Webhook URL.
+     * 
+     * @var string $url
+     */
     protected $url;
 
+    /**
+     * Incoming Webhook URL setter.
+     * 
+     * @param string $url
+     * @return $this
+     */
     public function to($url)
     {
         $this->url = $url;
@@ -16,6 +27,12 @@ class IncomingWebhook extends SlackApp
         return $this;
     }
 
+    /**
+     * Sending message.
+     * 
+     * @param string|array|\Cian\Slack\Message|\Cian\Slack\Builders\BlockBuilder|\Cian\Slack\Builders\AttachmentBuilder $message
+     * @return array
+     */
     public function send($message, $url = null)
     {
         if (!is_null($url)) {
@@ -33,6 +50,8 @@ class IncomingWebhook extends SlackApp
             'json' => $payload
         ];
 
-        return $this->client->request('POST', $this->url, $options);
+        $response = $this->client->request('POST', $this->url, $options);
+
+        return $response;
     }
 }

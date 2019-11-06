@@ -7,10 +7,29 @@ use Cian\Slack\Builders\AttachmentBuilder;
 
 class Message
 {
+    /**
+     * @var string $string
+     */
     protected $text = null;
+
+    /**
+     * @var bool $mrkdwn
+     */
     protected $mrkdwn = true;
+
+    /**
+     * @var string|null $thread_ts
+     */
     protected $thread_ts = null;
+
+    /**
+     * @var array[] $blocks
+     */
     protected $blocks = [];
+
+    /**
+     * @var array[] $attachments
+     */
     protected $attachments = [];
 
     public function __construct($message = null, $enableMarkdownForText = true)
@@ -31,6 +50,12 @@ class Message
         }
     }
 
+    /**
+     * Set enable markdown or not.
+     * 
+     * @param bool $value
+     * @return $this
+     */
     public function setMarkdown(bool $value)
     {
         $this->mrkdwn = $value;
@@ -38,11 +63,22 @@ class Message
         return $this;
     }
 
+    /**
+     * Enable markdown value getter.
+     * 
+     * @return bool
+     */
     public function getMarkdown()
     {
         return $this->mrkdwn;
     }
 
+    /**
+     * Property $thread_ts setter.
+     * 
+     * @param  string|null $value
+     * @return $this
+     */
     public function setThreadTs($value)
     {
         $this->thread_ts = $value;
@@ -50,34 +86,61 @@ class Message
         return $this;
     }
 
+    /**
+     * Property $thread_ts getter.
+     * 
+     * @return string|null
+     */
     public function getThreadTs()
     {
         return $this->thread_ts;
     }
 
-    public function setText($message)
+    /**
+     * Property $text setter.
+     * 
+     * @param string|null $text
+     * @return $this
+     */
+    public function setText($text)
     {
-        $this->text = $message;
+        $this->text = $text;
 
         return $this;
     }
 
+    /**
+     * Property $text getter.
+     * 
+     * @return string|null
+     */
     public function getText()
     {
         return $this->text;
     }
 
-    public function setAttachments($value)
+    /**
+     * Property $attachments setter.
+     * 
+     * @param \Cian\Slack\Builders\AttachmentBuilder|array $attachable
+     * @return $this
+     */
+    public function setAttachments($attachable)
     {
-        if (is_a($value, AttachmentBuilder::class)) {
-            $this->attachments = $value->toArray();
+        if (is_a($attachable, AttachmentBuilder::class)) {
+            $this->attachments = $attachable->toArray();
         } else {
-            $this->attachments = $value;
+            $this->attachments = $attachable;
         }
 
         return $this;
     }
 
+    /**
+     * Property $attachments getter.
+     * 
+     * @return $this 
+     */
     public function getAttachments()
     {
         return $this->attachments;
@@ -99,6 +162,11 @@ class Message
         return $this->blocks;
     }
 
+    /**
+     * Convert instance to slack message valid array schame.
+     * 
+     * @return array
+     */
     public function toArray()
     {
         $result = [];

@@ -7,8 +7,18 @@ use Cian\Slack\SlackApp;
 
 class InteractiveMessage extends SlackApp
 {
+    /**
+     * Can be slack_channel_name. slack_channel_id, slack_user_id.
+     * 
+     * @var string $channel
+     */
     protected $channel;
 
+    /**
+     * @param array $options
+     * @param \Cian\Slack\Client|\GuzzleHttp\Client|null $client
+     * @return void
+     */
     public function __construct($options = [], $client = null)
     {
         parent::__construct($options, $client);
@@ -18,6 +28,13 @@ class InteractiveMessage extends SlackApp
         }
     }
 
+    /**
+     * Set interactive channel
+     * Can be slack_channel_name. slack_channel_id, slack_user_id.
+     * 
+     * @param string $channel
+     * @return $this
+     */
     public function to($channel)
     {
         $this->channel = $channel;
@@ -25,6 +42,13 @@ class InteractiveMessage extends SlackApp
         return $this;
     }
 
+    /**
+     * Sending message.
+     * 
+     * @param string|array|\Cian\Slack\Message|\Cian\Slack\Builders\BlockBuilder|\Cian\Slack\Builders\AttachmentBuilder $message
+     * @param string|null $channel
+     * @return array
+     */
     public function send($message, $channel = null)
     {
         $payload = is_a($message, Message::class)
@@ -41,6 +65,13 @@ class InteractiveMessage extends SlackApp
         ]);
     }
 
+    /**
+     * Update a interactive message content.
+     * 
+     * @param string $url
+     * @param string $message
+     * @return array
+     */
     public function update($url, $message)
     {
         $api = $this->getAPI(self::CHAT_UPDATE_API);

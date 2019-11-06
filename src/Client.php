@@ -6,6 +6,9 @@ use GuzzleHttp\Client as Guzzle;
 
 class Client
 {
+    /**
+     * @var \GuzzleHttp\Client $http
+     */
     protected $http;
 
     /**
@@ -17,17 +20,20 @@ class Client
     }
 
     /**
+     * Wrap GuzzleClient request method, return array of decode response contents.
+     * 
      * @param string $method
      * @param string $url
      * @param array $options
-     *
      * @return array
      */
     public function request(string $method, string $url, array $options)
     {
         $response = $this->http->request($method, $url, $options);
 
-        return $this->parse($response);
+        $response = $this->parse($response);
+
+        return is_null($response) ? [] : $response;
     }
 
     /**
