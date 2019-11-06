@@ -4,7 +4,7 @@ namespace Cian\Slack\Messages;
 
 use ArrayAccess;
 
-abstract class Message implements ArrayAccess
+abstract class ArrayObject implements ArrayAccess
 {
     public function offsetExists($offset)
     {

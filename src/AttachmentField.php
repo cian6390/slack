@@ -1,15 +1,10 @@
 <?php
 
-namespace Cian\Slack\Messages;
+namespace Cian\Slack;
 
-/**
- * Properties description basically copy from slack document.
- * https://api.slack.com/docs/message-attachments
- * 
- * if something changed but I dodn't update, feel free to create a PR.
- */
+use Cian\Slack\ArrayObject;
 
-class AttachmentField
+class AttachmentField extends ArrayObject
 {
     /**
      * Shown as a bold heading above the value text.
