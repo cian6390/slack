@@ -57,12 +57,7 @@ class InteractiveMessage extends SlackApp
 
         $payload['channel'] = is_null($channel) ? $this->channel : $channel;
 
-        $api = $this->getAPI(self::CHAT_POST_MESSAGE_API);
-
-        return $this->client->request($api['method'], $api['url'], [
-            'headers' => $api['headers'],
-            'json' => $payload
-        ]);
+        return $this->postMessage($payload);
     }
 
     /**
@@ -74,15 +69,8 @@ class InteractiveMessage extends SlackApp
      */
     public function update($url, $message)
     {
-        $api = $this->getAPI(self::CHAT_UPDATE_API);
-
         $payload = (new Message($message))->toArray();
 
-        $options = [
-            'headers' => $api['headers'],
-            'json' => $payload
-        ];
-
-        return $this->client->request($api['method'], $url, $options);
+        return $this->updateMessage($url, $payload);
     }
 }

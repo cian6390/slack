@@ -2,10 +2,13 @@
 
 namespace Cian\Slack;
 
+use Cian\Slack\Attachment;
 use Cian\Slack\Builders\BlockBuilder;
 use Cian\Slack\Builders\AttachmentBuilder;
 
-class Message
+use Cian\Slack\ArrayObject;
+
+class Message extends ArrayObject
 {
     /**
      * @var string $string
@@ -50,27 +53,72 @@ class Message
         }
     }
 
-    /**
-     * Set enable markdown or not.
-     * 
-     * @param bool $value
-     * @return $this
-     */
-    public function setMarkdown(bool $value)
+    public function context(callable $callback)
     {
-        $this->mrkdwn = $value;
+        $this->blocks[] = $block = new ContextBlock;
+        $callback($block);
+        return $this;
+    }
 
+    public function section(callable $callback)
+    {
+        $this->blocks[] = $block = new SectionBlock;
+        $callback($block);
+        return $this;
+    }
+
+    public function actions(callable $callback)
+    {
+        $this->blocks[] = $block = new ActionsBlock;
+        $callback($block);
+        return $this;
+    }
+
+    public function image(callable $callback)
+    {
+        $this->blocks[] = $block = new ImageBlock;
+        $callback($block);
+        return $this;
+    }
+
+    public function input(callable $callback)
+    {
+        $this->blocks[] = $block = new InputBlock;
+        $callback($block);
+        return $this;
+    }
+
+    public function divider(callable $callback)
+    {
+        $this->blocks[] = $block = new Divider;
+        $callback($block);
         return $this;
     }
 
     /**
-     * Enable markdown value getter.
-     * 
-     * @return bool
+     * Define an attachment for the message.
+     *
+     * @param callable  $callback
+     * @return $this
      */
-    public function getMarkdown()
+    public function attachment(callable $callback)
     {
-        return $this->mrkdwn;
+        $this->attachments[] = $attachment = new SlackAttachment;
+        $callback($attachment);
+        return $this;
+    }
+
+    /**
+     * Toggle on/off markdown format.
+     * 
+     * @param bool $value
+     * @return $this
+     */
+    public function markdown(bool $value)
+    {
+        $this->mrkdwn = $value;
+
+        return $this;
     }
 
     /**
@@ -79,21 +127,11 @@ class Message
      * @param  string|null $value
      * @return $this
      */
-    public function setThreadTs($value)
+    public function threadTs($value)
     {
         $this->thread_ts = $value;
 
         return $this;
-    }
-
-    /**
-     * Property $thread_ts getter.
-     * 
-     * @return string|null
-     */
-    public function getThreadTs()
-    {
-        return $this->thread_ts;
     }
 
     /**
@@ -102,21 +140,11 @@ class Message
      * @param string|null $text
      * @return $this
      */
-    public function setText($text)
+    public function text($text)
     {
         $this->text = $text;
 
         return $this;
-    }
-
-    /**
-     * Property $text getter.
-     * 
-     * @return string|null
-     */
-    public function getText()
-    {
-        return $this->text;
     }
 
     /**
@@ -125,7 +153,7 @@ class Message
      * @param \Cian\Slack\Builders\AttachmentBuilder|array $attachable
      * @return $this
      */
-    public function setAttachments($attachable)
+    public function attachments($attachable)
     {
         if (is_a($attachable, AttachmentBuilder::class)) {
             $this->attachments = $attachable->toArray();
@@ -136,17 +164,7 @@ class Message
         return $this;
     }
 
-    /**
-     * Property $attachments getter.
-     * 
-     * @return $this 
-     */
-    public function getAttachments()
-    {
-        return $this->attachments;
-    }
-
-    public function setBlocks($value)
+    public function blocks($value)
     {
         if (is_a($value, BlockBuilder::class)) {
             $this->blocks = $value->toArray();
@@ -157,11 +175,6 @@ class Message
         return $this;
     }
 
-    public function getBlocks()
-    {
-        return $this->blocks;
-    }
-
     /**
      * Convert instance to slack message valid array schame.
      * 
@@ -169,28 +182,12 @@ class Message
      */
     public function toArray()
     {
-        $result = [];
-
-        if (count($this->blocks)) {
-            $result['blocks'] = $this->blocks;
-        }
-
-        if (count($this->attachments)) {
-            $result['attachments'] = $this->attachments;
-        }
-
-        if ($this->thread_ts) {
-            $result['thread_ts'] = $this->thread_ts;
-        }
-
-        if ($this->mrkdwn) {
-            $result['mrkdwn'] = $this->mrkdwn;
-        }
-
-        if ($this->text) {
-            $result['text'] = $this->text;
-        }
-
-        return $result;
+        return [
+            'text' => $this->text,
+            'mrkdwn' => $this->mrkdwn,
+            'thread_ts' => $this->threadTs,
+            'attachments' => $this->attachments,
+            'blocks' => $this->blocks
+        ];
     }
 }

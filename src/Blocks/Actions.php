@@ -3,6 +3,7 @@
 namespace Cian\Slack\Blocks;
 
 use Block;
+use Cian\Slack\Builders\ElementBuilder;
 
 class Actions extends Block
 {
@@ -39,5 +40,17 @@ class Actions extends Block
             'block_id' => $this->blockId,
             'elements' => $this->elements
         ];
+    }
+
+    /**
+     * @param string $text
+     * @param string $actionId
+     * @param string|number|array $value
+     * @param string $style 'default' | 'primary' | 'danger'
+     * @param string $type
+     */
+    public function button(string $text, string $actionId, $value = '', string $style = 'primary', string $type = 'plain_text')
+    {
+        return ElementBuilder::button($text, $actionId, $value, $style, $type);
     }
 }

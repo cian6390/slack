@@ -1,6 +1,6 @@
 <?php
 
-namespace Cian\Slack\Messages;
+namespace Cian\Slack;
 
 use ArrayAccess;
 

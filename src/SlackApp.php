@@ -3,10 +3,11 @@
 namespace Cian\Slack;
 
 use Cian\Slack\Client;
-use Cian\Slack\SlackContract;
 
-abstract class SlackApp implements SlackContract
+abstract class SlackApp
 {
+    const ENDPOINT = 'https://slack.com/api';
+
     protected $token;
 
     protected $client;
@@ -24,11 +25,6 @@ abstract class SlackApp implements SlackContract
         }
     }
 
-    public function setClient($client)
-    {
-        $this->client = $client;
-    }
-
     public function setToken(string $token)
     {
         $this->token = $token;
@@ -41,16 +37,42 @@ abstract class SlackApp implements SlackContract
         return $this->token;
     }
 
-    public function getAPI($api)
+    public function setClient($client)
     {
-        if (is_null($api['headers']['Authorization'])) {
-            $api['headers']['Authorization'] = 'Bearer ' . $this->getToken();
-        }
+        $this->client = $client;
 
-        return [
-            'method' => $api['method'],
-            'url' => self::API_ENDPOINT . $api['path'],
-            'headers' => $api['headers']
-        ];
+        return $this;
+    }
+
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    public function request(string $method, string $url, $options = [])
+    {
+        return $this->client->request($method, $url, $options);
+    }
+
+    public function postMessage(array $payload)
+    {
+        return $this->request('POST', self::ENDPOINT . '/chat.postMessage', [
+            'headers' => [
+                'Content-type' => 'application/json;charset=utf-8',
+                'Authorization' => 'Bearer ' . $this->getToken()
+            ],
+            'json' => $payload
+        ]);
+    }
+
+    public function updateMessage($payload, $url)
+    {
+        return $this->request('POST', $url, [
+            'headers' => [
+                'Content-type' => 'application/json',
+                'Authorization' => 'Bearer ' . $this->getToken()
+            ],
+            'json' => $payload
+        ]);
     }
 }

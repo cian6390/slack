@@ -4,19 +4,7 @@ namespace Cian\Slack\Builders;
 
 class ElementBuilder
 {
-    /**
-     * @param string $text
-     * @param string $actionId
-     * @param string|number|array $value
-     * @param string $style 'default' | 'primary' | 'danger'
-     * @param string $type
-     */
-    public function button(string $text, string $actionId, $value = '', string $style = 'primary', string $type = 'plain_text')
-    {
-        return static::makeButton($text, $actionId, $value, $style, $type);
-    }
-
-    public static function makeButton(string $text, string $actionId, $value = '', string $style = 'primary', string $type = 'plain_text')
+    public static function button(string $text, string $actionId, $value = '', string $style = 'primary', string $type = 'plain_text')
     {
         $value = is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value;
         $options = [
