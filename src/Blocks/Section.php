@@ -2,7 +2,7 @@
 
 namespace Cian\Slack\Blocks;
 
-use Block;
+use Cian\Slack\Blocks\Block;
 
 class Section extends Block
 {
@@ -20,7 +20,7 @@ class Section extends Block
      * You can use this block_id when you receive an interaction payload to identify the source of the action.
      * If not specified, a block_id will be generated.
      * Maximum length for this field is 255 characters.
-     * 
+     *
      * @var string|null Optional.
      */
     public $blockId;

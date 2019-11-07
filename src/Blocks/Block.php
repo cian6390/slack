@@ -2,7 +2,7 @@
 
 namespace Cian\Slack\Blocks;
 
-use Cian\Slack\Messages\ArrayObject;
+use Cian\Slack\ArrayObject;
 
 abstract class Block extends ArrayObject
 {
