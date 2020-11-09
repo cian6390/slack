@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Cian\Slack\Tests\TestCase;
 use Cian\Slack\IncomingWebhook;
 use Cian\Slack\Builders\BlockBuilder;
+use GuzzleHttp\Psr7\Response;
 
 class IncomingWebhookTest extends TestCase
 {
@@ -29,13 +30,13 @@ class IncomingWebhookTest extends TestCase
                     'mrkdwn' => true
                 ]
             ])
-            ->andReturn(null);
+            ->andReturn(new Response);
 
         $webhook = new IncomingWebhook([], $mock);
 
         $response = $webhook->send($message, $url);
 
-        $this->assertNull($response);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function test_array_message_case()
@@ -66,13 +67,13 @@ class IncomingWebhookTest extends TestCase
                 ],
                 'json' => $message
             ])
-            ->andReturn(null);
+            ->andReturn(new Response);
 
         $webhook = new IncomingWebhook([], $mock);
 
         $response = $webhook->send($message, $url);
 
-        $this->assertNull($response);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function test_block_builder_message_case()
@@ -106,12 +107,12 @@ class IncomingWebhookTest extends TestCase
                     ]
                 ]
             ])
-            ->andReturn(null);
+            ->andReturn(new Response);
 
         $webhook = new IncomingWebhook([], $mock);
 
         $response = $webhook->send($message, $url);
 
-        $this->assertNull($response);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }
